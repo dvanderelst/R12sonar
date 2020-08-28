@@ -1,33 +1,47 @@
 # main.py -- put your code here!
 import pyb
+import json
 from machine import UART
+import mySettings
+import myMics
 
-uart = UART(1, 9600)                         # init with given baudrate
-uart.init(9600, bits=8, parity=None, stop=1) # init with given parameters
-      # read 10 characters, returns a bytes object
+green = pyb.LED(2)
+red = pyb.LED(1)
+mics = myMics.mics()
 
+uart = UART(1, 9600)                         
+uart.init(9600, bits=8, parity=None, stop=1)
+    
 
 def listen():
     message = ''
     while True:
         part = uart.read()
+        green.toggle()
         if part is not None:
             part = part.decode('utf-8')
             part = part.rstrip('\r')
             part = part.rstrip('\n')
             print('part', part)
             message = message + part
-        if "*" in message: break
+        if mySettings.break_char in message: break
     return message
-    
 
 
-led = pyb.LED(2)
+
+
+
 while True:
     msg = listen()
-    print('message:', msg)
-    if 'on' in msg: led.on()
-    if 'off' in msg: led.off()
-    
+    if '100' in msg:
+        red.on()
+        A,B = mics.measure()
+        print(len(A))
+        red.off()
+        s = json.dumps(A)
+        uart.write(s)
+        s = json.dumps(B)
+        uart.write(s)
+        
 
 
