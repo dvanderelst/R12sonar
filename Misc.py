@@ -9,10 +9,12 @@ def get_wave(cycles, freq=40000, fs=500000):
     return buffer, fs
 
 
-from pyb import DAC
-# output the sine-wave at 400Hz
-#dac = DAC(1)
-#buffer, fs = get_wave(cycles=10, freq=250)
-#dac.write_timed(buffer, fs, mode=DAC.CIRCULAR)
-#for x in buffer: print(x)
+if __name__ == "__main__":
+    import mySettings
+    from pyb import DAC
+    # output the sine-wave at 400Hz
+    dac = DAC(mySettings.dac_channel)
+    buffer, fs = get_wave(cycles=10, freq=250)
+    dac.write_timed(buffer, fs, mode=DAC.CIRCULAR)
+    for x in buffer: print(x)
 
