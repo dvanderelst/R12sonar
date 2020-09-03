@@ -26,17 +26,5 @@ class mics:
         end = utime.ticks_us()
         duration = end - start
         return self.rxA, self.rxB
-        #print(duration/1000) # milliseconds
 
-if __name__ == "__main__":
-    m = mics()
-    start = utime.ticks_us()
-    m.measure()
-    m.measure()
-    A, B = m.measure()
-    print(len(A))
-    print(A)
-    end = utime.ticks_us()
-    duration = end - start
-    print('---')
-    print(duration/1000) # milliseconds
+

@@ -1,13 +1,14 @@
 # main.py -- put your code here!
 import pyb
 import json
+import time
 from machine import UART
 import mySettings
-import myMics
+import mySonar
 
 green = pyb.LED(2)
 red = pyb.LED(1)
-mics = myMics.mics()
+sonar = mySonar.sonar()
 
 uart = UART(1, 9600)                         
 uart.init(9600, bits=8, parity=None, stop=1)
@@ -29,19 +30,33 @@ def listen():
 
 
 
-
-
 while True:
-    msg = listen()
-    if '100' in msg:
-        red.on()
-        A,B = mics.measure()
-        print(len(A))
-        red.off()
-        s = json.dumps(A)
-        uart.write(s)
-        s = json.dumps(B)
-        uart.write(s)
-        
+    red.on()
+    A,B = sonar.pulse()
+    time.sleep(1)
+    print(len(A))
+    red.off()
+    s = json.dumps(A)
+    uart.write(s)
+    s = json.dumps(B)
+    uart.write(s)
+    
+    
+    
+
+
+
+# while True:
+#     msg = listen()
+#     if '100' in msg:
+#         red.on()
+#         A,B = mics.measure()
+#         print(len(A))
+#         red.off()
+#         s = json.dumps(A)
+#         uart.write(s)
+#         s = json.dumps(B)
+#         uart.write(s)
+#         
 
 
