@@ -14,7 +14,7 @@ if __name__ == "__main__":
     from pyb import DAC
     # output the sine-wave at 400Hz
     dac = DAC(mySettings.dac_channel)
-    buffer, fs = get_wave(cycles=10, freq=250)
+    buffer, fs = get_wave(cycles=20, freq=40000)
     dac.write_timed(buffer, fs, mode=DAC.CIRCULAR)
     for x in buffer: print(x)
 

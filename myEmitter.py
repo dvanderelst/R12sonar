@@ -18,7 +18,7 @@ class emitter:
         
     def emit(self, cycles=40):
         if cycles != self.cycles: self.make_buffer(cycles)
-        self.dac.write_timed(self.buffer, self.frequency * 2, mode=DAC.NORMAL)
+        self.dac.write_timed(self.buffer, self.fs, mode=DAC.NORMAL)
         
 
 if __name__ == "__main__":
