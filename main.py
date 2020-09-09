@@ -1,19 +1,37 @@
-# main.py -- put your code here!
+import utime
+import pyb
+import array
 import pyb
 import json
 import time
 from machine import UART
-import mySettings
-import mySonar
+
 
 green = pyb.LED(2)
 red = pyb.LED(1)
-sonar = mySonar.sonar()
 
 uart = UART(1, 9600)                         
 uart.init(9600, bits=8, parity=None, stop=1)
     
 
+break_char = '*'
+fs = 1000
+ms = 50
+samples = int((fs/1000) * ms)
+buffer = array.array('H', (0 for i in range(samples)))
+timer = pyb.Timer(6, freq=fs)
+
+adc1 = pyb.ADC(pyb.Pin.board.Y11)
+trigger_pin1 = pyb.Pin('X1', pyb.Pin.OUT_PP)
+
+
+def measure(channel=1):
+    if channel == 1:
+        trigger_pin1.high()
+        utime.sleep_us(50)
+        trigger_pin1.low()    
+        adc1.read_timed(buffer, timer)
+        
 def listen():
     message = ''
     while True:
@@ -25,38 +43,19 @@ def listen():
             part = part.rstrip('\n')
             print('part', part)
             message = message + part
-        if mySettings.break_char in message: break
+        if break_char in message: break
     return message
 
+
+    
 
 
 while True:
     red.on()
-    A,B = sonar.pulse()
+    measure()
     time.sleep(1)
-    print(len(A))
     red.off()
-    s = json.dumps(A)
+    
+    s = json.dumps(buffer)
     uart.write(s)
-    s = json.dumps(B)
-    uart.write(s)
-    
-    
-    
-
-
-
-# while True:
-#     msg = listen()
-#     if '100' in msg:
-#         red.on()
-#         A,B = mics.measure()
-#         print(len(A))
-#         red.off()
-#         s = json.dumps(A)
-#         uart.write(s)
-#         s = json.dumps(B)
-#         uart.write(s)
-#         
-
-
+   
