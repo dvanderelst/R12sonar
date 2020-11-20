@@ -4,7 +4,7 @@ import array
 import pyb
 import json
 import time
-from machine import UART
+import machine
 
 
 break_char = '*'
@@ -16,13 +16,15 @@ blue = pyb.LED(4)
 
 
 # For uart communication
-uart = UART(1, 9600)                         
+uart = pyb.UART(1, 9600)                         
 uart.init(9600, bits=8, parity=None, stop=1)
 # For usb communication
 usb = pyb.USB_VCP()
 
 fs = 10000
-ms = 50
+ms = 25
+signal_threshold = 1000
+
 samples = int((fs/1000) * ms)
 buffer = array.array('H', (0 for i in range(samples)))
 timer = pyb.Timer(6, freq=fs)
@@ -34,6 +36,10 @@ adc2 = pyb.ADC(pyb.Pin.board.Y12)
 trigger_pin2 = pyb.Pin('X2', pyb.Pin.OUT_PP)
 
 
+trigger_pin1.low()
+trigger_pin2.low()
+
+
 ################################################
 #
 output_type = 'uart'
@@ -41,16 +47,19 @@ output_type = 'uart'
 ################################################
 
 def measure(channel=1):
+    value = 0
     if channel == 1:
         trigger_pin1.high()
-        utime.sleep_us(50)
-        trigger_pin1.low()    
+        utime.sleep_us(25)
+        trigger_pin1.low()        
+        while value < signal_threshold: value = adc1.read()
         adc1.read_timed(buffer, timer)
         
     if channel == 2:
         trigger_pin2.high()
-        utime.sleep_us(50)
-        trigger_pin2.low()    
+        utime.sleep_us(25)
+        trigger_pin2.low()
+        while value < signal_threshold: value = adc2.read()
         adc2.read_timed(buffer, timer)
         
 def listen_for_uart():
@@ -59,6 +68,7 @@ def listen_for_uart():
         part = uart.read()
         green.toggle()
         if part is not None:
+            print(part)
             part = part.decode('utf-8')
             part = part.rstrip('\n\r')     
             message = message + part
@@ -91,10 +101,10 @@ def listen_for_usb():
 output_type = output_type.lower()
 
 if output_type == 'test':
-    while True:
-        print('measure')
-        measure(channel=1)
-        time.sleep(1)
+    print('Measure')
+    measure(channel=1)
+    for x in buffer: print(x)
+    print('Done')
     
 
 if output_type == 'usb':
@@ -110,11 +120,9 @@ if output_type == 'uart':
     while True:
         blue.on()
         channel = listen_for_uart()
-        print(channel)
         measure(channel=channel)
-        print('done')
         blue.off()
-
         uart.write(buffer)
+
 
        
