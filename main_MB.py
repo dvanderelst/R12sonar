@@ -21,8 +21,8 @@ uart.init(9600, bits=8, parity=None, stop=1)
 # For usb communication
 usb = pyb.USB_VCP()
 
-fs = 10000
-ms = 25
+fs = 25000
+ms = 20
 signal_threshold = 1000
 
 samples = int((fs/1000) * ms)
