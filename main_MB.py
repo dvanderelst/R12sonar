@@ -22,7 +22,7 @@ uart.init(9600, bits=8, parity=None, stop=1)
 usb = pyb.USB_VCP()
 
 fs = 25000
-ms = 20
+ms = 30
 signal_threshold = 1000
 
 samples = int((fs/1000) * ms)
@@ -118,11 +118,11 @@ if output_type == 'usb':
 
 if output_type == 'uart':
     while True:
-        blue.on()
         channel = listen_for_uart()
+        blue.on()
         measure(channel=channel)
-        blue.off()
         uart.write(buffer)
+        blue.off()
 
 
        
