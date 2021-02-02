@@ -13,7 +13,7 @@ green = pyb.LED(2)
 orange = pyb.LED(3)
 blue = pyb.LED(4)
 
-baud = 9600
+baud =  9600 #
 uart = pyb.UART(1, baud)                         
 uart.init(baud, bits=8, parity=None, stop=1)
 
@@ -70,7 +70,7 @@ def listen_for_uart():
 
 
 
-
+blue.off()
 while True:
     parameters = listen_for_uart()
     blue.on()
