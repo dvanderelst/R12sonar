@@ -1,3 +1,11 @@
+# NOTE BEFORE ARCHIVING
+
+June 24, 2024 
+This seems to be older code that is *NOT* the code running on the R12 sonarhead (ie the head with the two maxbotix sensors).
+The code running on the sonarhead is the PyboardD repository. To avoia confusion, I am archiving this repo.
+
+# END NOTE
+
 This is a MicroPython board
 
 You can get started right away by writing your Python code in 'main.py'.
